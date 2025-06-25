@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import toast from "react-hot-toast";
 
 interface Item {
   id: number;
@@ -124,7 +125,7 @@ const Refresh: React.FC = () => {
       .single();
     if (pErr || !newPurchase) {
       console.error("Purchase insert failed:", pErr);
-      alert("Failed to record purchase");
+      toast.error("Failed to record purchase");
       return;
     }
 
@@ -140,7 +141,7 @@ const Refresh: React.FC = () => {
       );
     if (piErr) {
       console.error("Line-items insert failed:", piErr);
-      alert("Failed to record line items");
+      toast.error("Failed to record line items");
       return;
     }
 
@@ -148,7 +149,7 @@ const Refresh: React.FC = () => {
     await fetchPurchases();
     setCart([]);
     setShowConfirmModal(false);
-    alert("Purchase completed successfully!");
+    toast.success("Purchase completed successfully!");
   };
 
   // ─── CATALOG CRUD ───────────────────────────────────────────────────
@@ -163,7 +164,7 @@ const Refresh: React.FC = () => {
       .select();
     if (error) {
       console.error("Add item error:", error);
-      alert("Failed to add item");
+      toast.error("Failed to add item");
     } else {
       setItems((prev) => [...prev, added![0]]);
       setNewItem({ name: "", price: "" });
@@ -180,7 +181,7 @@ const Refresh: React.FC = () => {
       .select();
     if (error) {
       console.error("Update item error:", error);
-      alert("Failed to update");
+      toast.error("Failed to update");
     } else {
       setItems(items.map((i) => (i.id === editingItem.id ? updated![0] : i)));
       setEditingItem(null);
@@ -192,7 +193,7 @@ const Refresh: React.FC = () => {
     const { error } = await supabase.from("items").delete().eq("id", itemId);
     if (error) {
       console.error("Delete item error:", error);
-      alert("Failed to delete");
+      toast.error("Failed to delete");
     } else {
       setItems(items.filter((i) => i.id !== itemId));
     }
